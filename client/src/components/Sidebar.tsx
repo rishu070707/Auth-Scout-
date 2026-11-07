@@ -1,33 +1,37 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import {
+  Home,
   LayoutDashboard,
   Boxes,
-  Sparkles,
+  Zap,
   BookmarkCheck,
   BookOpen,
-  Settings,
-  ShieldCheck,
+  Shield,
   ExternalLink
 } from 'lucide-react';
 
 export const Sidebar: React.FC = () => {
   const navItems = [
-    { to: '/', label: 'Overview', icon: LayoutDashboard },
-    { to: '/directory', label: 'App Directory', icon: Boxes },
-    { to: '/research', label: 'AI Research Agent', icon: Sparkles, badge: 'Live' },
-    { to: '/my-guides', label: 'My Guides', icon: BookmarkCheck },
-    { to: '/docs', label: 'Documentation', icon: BookOpen },
+    { to: '/', label: 'Landing Page', icon: Home, code: 'HOME' },
+    { to: '/overview', label: 'Console / Stats', icon: LayoutDashboard, code: 'DASH' },
+    { to: '/directory', label: 'App Directory', icon: Boxes, code: 'DIR' },
+    { to: '/research', label: 'AI Research Agent', icon: Zap, code: 'AGENT', badge: 'Live' },
+    { to: '/my-guides', label: 'My Guides', icon: BookmarkCheck, code: 'SAVE' },
+    { to: '/docs', label: 'Documentation', icon: BookOpen, code: 'DOCS' },
   ];
 
   return (
-    <aside className="w-64 border-r border-slate-800/80 bg-slate-950 flex flex-col shrink-0 min-h-[calc(100vh-4rem)]">
-      <div className="p-4 flex-1 space-y-6">
+    <aside className="w-60 border-r-2 border-void-700 bg-void-900 flex flex-col shrink-0 min-h-[calc(100vh-3.5rem)]">
+      <div className="p-3 flex-1 space-y-5">
+
+        {/* Nav label */}
+        <div className="px-2 pt-1">
+          <span className="sys-label">Navigation</span>
+        </div>
+
         {/* Navigation list */}
-        <div className="space-y-1">
-          <div className="px-3 py-1.5 text-[11px] font-semibold text-slate-400 uppercase tracking-wider">
-            Navigation
-          </div>
+        <div className="space-y-0.5">
           {navItems.map((item) => {
             const Icon = item.icon;
             return (
@@ -36,19 +40,19 @@ export const Sidebar: React.FC = () => {
                 to={item.to}
                 end={item.to === '/'}
                 className={({ isActive }) =>
-                  `flex items-center justify-between px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                  `flex items-center justify-between px-2.5 py-2 text-xs font-mono uppercase tracking-wider transition-all border-l-2 ${
                     isActive
-                      ? 'bg-indigo-600/10 text-indigo-400 border border-indigo-500/20'
-                      : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900/60'
+                      ? 'border-brand-500 bg-brand-500/10 text-brand-500 font-black'
+                      : 'border-transparent text-void-400 hover:text-void-100 hover:border-void-500 hover:bg-void-800'
                   }`
                 }
               >
                 <div className="flex items-center gap-2.5">
-                  <Icon className="w-4 h-4 shrink-0" />
+                  <Icon className="w-3.5 h-3.5 shrink-0" strokeWidth={item.to === '/research' ? 3 : 2} />
                   <span>{item.label}</span>
                 </div>
                 {item.badge && (
-                  <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                  <span className="status-live shrink-0">
                     {item.badge}
                   </span>
                 )}
@@ -57,33 +61,41 @@ export const Sidebar: React.FC = () => {
           })}
         </div>
 
+        {/* Divider */}
+        <div className="border-t-2 border-void-700" />
+
         {/* Composio Managed Auth Card */}
-        <div className="p-3.5 rounded-xl bg-slate-900/70 border border-slate-800/80 text-xs space-y-2">
-          <div className="flex items-center gap-2 text-indigo-400 font-semibold">
-            <ShieldCheck className="w-4 h-4" />
-            <span>Managed OAuth</span>
+        <div className="p-3 border-2 border-void-600 bg-void-800 space-y-2 relative overflow-hidden">
+          <div className="absolute left-0 top-0 bottom-0 w-1 bg-brand-500" />
+          <div className="pl-2">
+            <div className="flex items-center gap-1.5 mb-1.5">
+              <Shield className="w-3.5 h-3.5 text-brand-500" strokeWidth={2.5} />
+              <span className="text-xs font-mono font-bold text-brand-500 uppercase tracking-wider">
+                Managed OAuth
+              </span>
+            </div>
+            <p className="text-void-300 text-[11px] font-mono leading-relaxed">
+              Eliminate approval delays & CASA audits with pre-verified Composio credentials.
+            </p>
+            <a
+              href="https://docs.composio.dev/toolkits/managed-auth"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1 text-[11px] font-mono text-brand-500 hover:underline mt-2"
+            >
+              <span>Learn how it works</span>
+              <ExternalLink className="w-2.5 h-2.5" />
+            </a>
           </div>
-          <p className="text-slate-400 text-[11px] leading-relaxed">
-            Eliminate complex approval delays & CASA audits with pre-verified Composio credentials.
-          </p>
-          <a
-            href="https://docs.composio.dev/toolkits/managed-auth"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-1 text-[11px] text-indigo-400 hover:text-indigo-300 font-medium"
-          >
-            <span>Learn how Managed Auth works</span>
-            <ExternalLink className="w-3 h-3" />
-          </a>
         </div>
       </div>
 
-      {/* Footer Info */}
-      <div className="p-4 border-t border-slate-800/80 text-[11px] text-slate-400 flex items-center justify-between">
-        <span>AuthScout v1.0.0</span>
-        <span className="font-mono text-emerald-400 flex items-center gap-1.5">
-          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-          Ready
+      {/* Status bar footer */}
+      <div className="status-bar px-3 py-2 flex items-center justify-between">
+        <span className="text-void-500 uppercase tracking-wider">AUTHSCOUT v1.0.0</span>
+        <span className="flex items-center gap-1.5 text-term-green font-bold">
+          <span className="w-1.5 h-1.5 rounded-full bg-term-green animate-pulse inline-block" />
+          SYSTEM_READY
         </span>
       </div>
     </aside>

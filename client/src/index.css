@@ -4,35 +4,130 @@
 
 @layer base {
   body {
-    @apply bg-slate-950 text-slate-100;
+    @apply bg-void-900 text-void-100 font-mono;
+    background-image: radial-gradient(circle, #2a2a2a 1px, transparent 1px);
+    background-size: 28px 28px;
   }
 }
 
-/* Custom scrollbar */
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+/* ─── Custom Scrollbar ──────────────────────────── */
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: #0a0a0a; }
+::-webkit-scrollbar-thumb { background: #2a2a2a; border-radius: 0; }
+::-webkit-scrollbar-thumb:hover { background: #FFE500; }
+
+/* ─── Selection ────────────────────────────────── */
+::selection { background: #FFE500; color: #0a0a0a; }
+
+/* ─── Brutalist border helper ──────────────────── */
+.b-card {
+  border: 2px solid #2a2a2a;
+  background: #111111;
+}
+.b-card-active {
+  border: 2px solid #FFE500;
+  background: #111111;
+  box-shadow: 4px 4px 0px 0px #FFE500;
 }
 
-::-webkit-scrollbar-track {
-  background: #090d16;
+/* ─── Terminal cursor ───────────────────────────── */
+.cursor-blink::after {
+  content: '█';
+  animation: blink 1s step-end infinite;
+  color: #FFE500;
 }
 
-::-webkit-scrollbar-thumb {
-  background: #1e293b;
-  border-radius: 3px;
+/* ─── Status bar at bottom (image 2 style) ─────── */
+.status-bar {
+  border-top: 1px solid #2a2a2a;
+  background: #0a0a0a;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.05em;
 }
 
-::-webkit-scrollbar-thumb:hover {
-  background: #334155;
+/* ─── Uppercase label style ─────────────────────── */
+.sys-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #707070;
 }
 
+/* ─── Node card (image 2 style) ─────────────────── */
+.node-card {
+  border: 2px solid #333333;
+  background: #111111;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.node-card:hover {
+  border-color: #FFE500;
+  box-shadow: 4px 4px 0 0 #FFE500;
+}
+
+/* ─── Yellow pill button ────────────────────────── */
+.btn-yellow {
+  background: #FFE500;
+  color: #0a0a0a;
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border: 2px solid #FFE500;
+  transition: background 0.1s, box-shadow 0.1s;
+}
+.btn-yellow:hover {
+  background: #0a0a0a;
+  color: #FFE500;
+  box-shadow: 3px 3px 0 0 #FFE500;
+}
+
+/* ─── Ghost button ──────────────────────────────── */
+.btn-ghost {
+  background: transparent;
+  color: #FFE500;
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border: 2px solid #FFE500;
+  transition: background 0.1s, box-shadow 0.1s;
+}
+.btn-ghost:hover {
+  background: #FFE500;
+  color: #0a0a0a;
+  box-shadow: 3px 3px 0 0 rgba(255,229,0,0.5);
+}
+
+/* ─── Green status pill ─────────────────────────── */
+.status-live {
+  background: #00FF94;
+  color: #0a0a0a;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 2px 8px;
+}
+
+/* ─── Code / terminal block ─────────────────────── */
+.terminal-block {
+  background: #050505;
+  border: 1px solid #2a2a2a;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+/* ─── Print styles ──────────────────────────────── */
 @media print {
-  aside, header, button, .print\:hidden {
-    display: none !important;
-  }
+  aside, header, button, .print\:hidden { display: none !important; }
   body, main {
     background: #ffffff !important;
     color: #000000 !important;
+    background-image: none !important;
   }
 }

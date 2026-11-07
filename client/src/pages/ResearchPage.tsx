@@ -1,20 +1,17 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { startResearch, fetchResearchJob } from '../api/client';
-import { ResearchJob, ResearchProgressEvent, SourceCitation } from '../types';
+import { ResearchJob, ResearchProgressEvent } from '../types';
 import {
-  Sparkles,
+  Zap,
   Search,
   ExternalLink,
   CheckCircle2,
-  Clock,
   AlertCircle,
-  AlertTriangle,
   ArrowRight,
   Terminal,
-  ShieldCheck,
+  Shield,
   RefreshCw,
-  Globe
 } from 'lucide-react';
 
 export const ResearchPage: React.FC = () => {
@@ -27,16 +24,16 @@ export const ResearchPage: React.FC = () => {
   const [job, setJob] = useState<ResearchJob | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
+  const logRef = useRef<HTMLDivElement>(null);
   const eventSourceRef = useRef<EventSource | null>(null);
 
   const STAGES = [
-    { title: 'Application Discovery', desc: 'Identify official developer portal & website' },
-    { title: 'OAuth Research', desc: 'Extract endpoints, flows, tokens & scopes' },
-    { title: 'Approval Intelligence', desc: 'Determine review barriers & waiting timelines' },
-    { title: 'Setup Exploration', desc: 'Map registration forms & portal steps' },
-    { title: 'Evidence Verification', desc: 'Validate claims & calculate confidence' },
-    { title: 'Guide Generation', desc: 'Synthesize Composio intelligence & guide' }
+    { title: 'Application Discovery', desc: 'Identify official developer portal & website', code: 'DISC' },
+    { title: 'OAuth Research',        desc: 'Extract endpoints, flows, tokens & scopes',    code: 'OAUTH' },
+    { title: 'Approval Intelligence', desc: 'Determine review barriers & waiting timelines', code: 'APPR' },
+    { title: 'Setup Exploration',     desc: 'Map registration forms & portal steps',         code: 'SETUP' },
+    { title: 'Evidence Verification', desc: 'Validate claims & calculate confidence',         code: 'VERF' },
+    { title: 'Guide Generation',      desc: 'Synthesize Composio intelligence & guide',      code: 'GEN' },
   ];
 
   const handleStartResearch = async (e: React.FormEvent) => {
@@ -45,11 +42,9 @@ export const ResearchPage: React.FC = () => {
       setError('Please provide both the application name and official website URL.');
       return;
     }
-
     setLoading(true);
     setError(null);
     setJob(null);
-
     try {
       const res = await startResearch(name.trim(), website.trim());
       setJobId(res.jobId);
@@ -59,13 +54,9 @@ export const ResearchPage: React.FC = () => {
     }
   };
 
-  // Connect to SSE stream whenever jobId changes
   useEffect(() => {
     if (!jobId) return;
-
-    if (eventSourceRef.current) {
-      eventSourceRef.current.close();
-    }
+    if (eventSourceRef.current) eventSourceRef.current.close();
 
     const sse = new EventSource(`/api/research/${jobId}/stream`);
     eventSourceRef.current = sse;
@@ -75,7 +66,6 @@ export const ResearchPage: React.FC = () => {
         const data = JSON.parse(event.data);
         if (data.type === 'COMPLETE') {
           setLoading(false);
-          // Refetch final job state
           fetchResearchJob(jobId).then(setJob);
           sse.close();
         } else if (data.type === 'ERROR') {
@@ -83,7 +73,6 @@ export const ResearchPage: React.FC = () => {
           setLoading(false);
           sse.close();
         } else {
-          // Progress Event
           const progressEv = data as ResearchProgressEvent;
           setJob((prev) => {
             if (!prev) {
@@ -98,12 +87,9 @@ export const ResearchPage: React.FC = () => {
                 startedAt: new Date().toISOString()
               };
             }
-            return {
-              ...prev,
-              currentStage: progressEv.stage,
-              progressEvents: [...prev.progressEvents, progressEv]
-            };
+            return { ...prev, currentStage: progressEv.stage, progressEvents: [...prev.progressEvents, progressEv] };
           });
+          setTimeout(() => { logRef.current?.scrollTo({ top: 99999, behavior: 'smooth' }); }, 50);
         }
       } catch (err) {
         console.error('SSE parse error:', err);
@@ -111,7 +97,6 @@ export const ResearchPage: React.FC = () => {
     };
 
     sse.onerror = () => {
-      // Poll fallback if SSE drops
       fetchResearchJob(jobId).then((j) => {
         setJob(j);
         if (j.status === 'completed' || j.status === 'failed') {
@@ -121,75 +106,83 @@ export const ResearchPage: React.FC = () => {
       });
     };
 
-    return () => {
-      sse.close();
-    };
+    return () => { sse.close(); };
   }, [jobId]);
 
   return (
-    <div className="space-y-8 max-w-4xl mx-auto pb-24">
+    <div className="space-y-6 max-w-4xl mx-auto pb-24">
+
       {/* Page Header */}
-      <div className="space-y-2">
-        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono font-medium bg-indigo-500/10 text-indigo-300 border border-indigo-500/20">
-          <Sparkles className="w-3.5 h-3.5 text-indigo-400" />
-          <span>Autonomous AI Integration Investigator</span>
+      <div className="border-b-2 border-void-700 pb-4">
+        <div className="flex items-center gap-2 mb-1">
+          <div className="w-1 h-6 bg-brand-500" />
+          <div className="inline-flex items-center gap-2">
+            <span className="text-[9px] font-mono font-bold text-brand-500 uppercase tracking-widest bg-brand-500/10 border border-brand-500/40 px-2 py-0.5">
+              Autonomous AI Integration Investigator
+            </span>
+          </div>
         </div>
-        <h1 className="text-3xl font-extrabold text-white tracking-tight">
+        <h1 className="text-2xl md:text-3xl font-black font-mono text-white uppercase tracking-tight pl-3">
           AI OAuth Research Workspace
         </h1>
-        <p className="text-xs text-slate-400 max-w-2xl leading-relaxed">
-          Submit any unfamiliar SaaS application or platform. The autonomous multi-agent pipeline navigates developer documentation, extracts OAuth 2.0 endpoints, models verification constraints, and generates an actionable setup guide with real source citations.
+        <p className="text-xs text-void-500 font-mono pl-3 mt-1 leading-relaxed max-w-2xl">
+          Submit any unfamiliar SaaS application or platform. The autonomous multi-agent pipeline navigates
+          developer documentation, extracts OAuth 2.0 endpoints, models verification constraints, and
+          generates an actionable setup guide with real source citations.
         </p>
       </div>
 
       {/* Input Form */}
-      <form onSubmit={handleStartResearch} className="p-6 rounded-2xl bg-slate-900/60 border border-slate-800 space-y-4 shadow-lg">
+      <form
+        onSubmit={handleStartResearch}
+        className="border-2 border-void-600 bg-void-800 p-6 space-y-4"
+      >
+        {/* Form title bar */}
+        <div className="flex items-center gap-2 border-b-2 border-void-700 pb-3 mb-4">
+          <Terminal className="w-4 h-4 text-brand-500" />
+          <span className="sys-label text-brand-500">New Investigation Job</span>
+        </div>
+
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="space-y-1.5">
-            <label className="text-xs font-mono uppercase tracking-wider text-slate-300 font-medium">
-              Application Name
-            </label>
+            <label className="sys-label block">Application Name</label>
             <input
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="e.g. Airtable, Hubspot, Asana"
+              placeholder="e.g. Airtable, HubSpot, Asana"
               disabled={loading}
-              className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3.5 py-2.5 text-xs text-slate-100 placeholder:text-slate-500 focus:outline-none focus:border-indigo-500 transition-colors disabled:opacity-50"
+              className="w-full bg-void-900 border-2 border-void-600 px-3.5 py-2.5 text-xs font-mono text-void-100 placeholder:text-void-500 focus:outline-none focus:border-brand-500 transition-colors disabled:opacity-50"
             />
           </div>
-
           <div className="space-y-1.5">
-            <label className="text-xs font-mono uppercase tracking-wider text-slate-300 font-medium">
-              Official Website URL
-            </label>
+            <label className="sys-label block">Official Website URL</label>
             <input
               type="url"
               value={website}
               onChange={(e) => setWebsite(e.target.value)}
               placeholder="https://airtable.com"
               disabled={loading}
-              className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3.5 py-2.5 text-xs text-slate-100 placeholder:text-slate-500 focus:outline-none focus:border-indigo-500 transition-colors disabled:opacity-50"
+              className="w-full bg-void-900 border-2 border-void-600 px-3.5 py-2.5 text-xs font-mono text-void-100 placeholder:text-void-500 focus:outline-none focus:border-brand-500 transition-colors disabled:opacity-50"
             />
           </div>
         </div>
 
         {error && (
-          <div className="p-3 rounded-lg bg-rose-950/40 border border-rose-500/30 text-rose-300 text-xs flex items-center gap-2">
-            <AlertCircle className="w-4 h-4 text-rose-400 shrink-0" />
+          <div className="p-3 border-2 border-term-red bg-term-red/10 text-term-red text-xs font-mono flex items-center gap-2">
+            <AlertCircle className="w-4 h-4 shrink-0" />
             <span>{error}</span>
           </div>
         )}
 
         <div className="flex items-center justify-between pt-2">
-          <div className="text-[11px] text-slate-400 font-mono hidden sm:block">
+          <div className="text-[11px] text-void-500 font-mono hidden sm:block">
             Protected with SSRF validation & domain boundary enforcement
           </div>
-
           <button
             type="submit"
             disabled={loading}
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-semibold bg-indigo-600 hover:bg-indigo-500 text-white transition-colors disabled:opacity-50 shadow-md shadow-indigo-600/20"
+            className="btn-yellow px-5 py-2.5 text-xs flex items-center gap-2 disabled:opacity-50"
           >
             {loading ? (
               <>
@@ -198,7 +191,7 @@ export const ResearchPage: React.FC = () => {
               </>
             ) : (
               <>
-                <Sparkles className="w-3.5 h-3.5 text-indigo-200" />
+                <Zap className="w-3.5 h-3.5" strokeWidth={3} />
                 <span>Start AI Investigation</span>
               </>
             )}
@@ -206,163 +199,173 @@ export const ResearchPage: React.FC = () => {
         </div>
       </form>
 
-      {/* Suggested Unfamiliar Applications */}
+      {/* Suggested examples */}
       {!job && (
-        <div className="p-4 rounded-xl bg-slate-900/30 border border-slate-800/60 text-xs space-y-2">
-          <span className="font-mono text-slate-400 uppercase tracking-wider text-[11px] font-semibold">
-            Try an unfamiliar application example:
-          </span>
+        <div className="border-2 border-void-700 bg-void-800 p-4 space-y-2">
+          <span className="sys-label block mb-2">Try an unfamiliar application:</span>
           <div className="flex flex-wrap gap-2">
             {[
-              { n: 'Airtable', w: 'https://airtable.com' },
-              { n: 'HubSpot', w: 'https://hubspot.com' },
-              { n: 'Asana', w: 'https://asana.com' },
-              { n: 'Salesforce', w: 'https://salesforce.com' }
+              { n: 'Airtable',    w: 'https://airtable.com' },
+              { n: 'HubSpot',     w: 'https://hubspot.com' },
+              { n: 'Asana',       w: 'https://asana.com' },
+              { n: 'Salesforce',  w: 'https://salesforce.com' },
             ].map((ex) => (
               <button
                 key={ex.n}
-                onClick={() => {
-                  setName(ex.n);
-                  setWebsite(ex.w);
-                }}
-                className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 font-mono text-xs transition-colors"
+                onClick={() => { setName(ex.n); setWebsite(ex.w); }}
+                className="btn-ghost px-3 py-1.5 text-xs"
               >
-                {ex.n} ({ex.w})
+                {ex.n}
               </button>
             ))}
           </div>
         </div>
       )}
 
-      {/* Live Agent Execution Pipeline Panel */}
+      {/* Live Agent Pipeline */}
       {job && (
-        <div className="space-y-6">
-          <div className="p-6 rounded-2xl bg-slate-900/70 border border-slate-800 space-y-6 shadow-xl">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-4">
+        <div className="space-y-5">
+          <div className="border-2 border-void-600 bg-void-800 overflow-hidden">
+            {/* Pipeline header */}
+            <div className="border-b-2 border-void-700 px-5 py-3 flex items-center justify-between bg-void-900">
               <div className="flex items-center gap-3">
-                <div className="w-3 h-3 rounded-full bg-emerald-400 animate-pulse"></div>
-                <h3 className="font-bold text-white text-base font-sans">
+                <div className="w-2.5 h-2.5 bg-term-green animate-pulse" />
+                <span className="font-mono font-black text-white text-sm uppercase tracking-wider">
                   Live Agent Pipeline: {job.applicationName}
-                </h3>
+                </span>
               </div>
-              <span className="text-xs font-mono px-2.5 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700">
-                Job ID: {job.jobId}
+              <span className="text-[10px] font-mono text-void-500 border-2 border-void-600 px-2 py-0.5">
+                JOB: {job.jobId.slice(-8).toUpperCase()}
               </span>
             </div>
 
-            {/* Stages Stepper */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-              {STAGES.map((s, idx) => {
-                const stageEvents = job.progressEvents.filter((e) => e.stage === s.title);
-                const lastEvent = stageEvents[stageEvents.length - 1];
-                const isRunning = lastEvent?.status === 'running';
-                const isDone = lastEvent?.status === 'completed';
-                const isHuman = lastEvent?.status === 'needs_human';
-                const isFailed = lastEvent?.status === 'failed';
+            <div className="p-5 space-y-5">
+              {/* Stage grid — image 2 node style */}
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                {STAGES.map((s, idx) => {
+                  const stageEvents = job.progressEvents.filter((e) => e.stage === s.title);
+                  const lastEvent = stageEvents[stageEvents.length - 1];
+                  const isRunning = lastEvent?.status === 'running';
+                  const isDone = lastEvent?.status === 'completed';
+                  const isHuman = lastEvent?.status === 'needs_human';
 
-                return (
-                  <div
-                    key={idx}
-                    className={`p-3.5 rounded-xl border transition-all ${
-                      isRunning
-                        ? 'bg-indigo-950/40 border-indigo-500/60 shadow-sm shadow-indigo-500/10'
-                        : isDone
-                        ? 'bg-slate-950/80 border-emerald-500/30'
-                        : isHuman
-                        ? 'bg-amber-950/30 border-amber-500/40'
-                        : 'bg-slate-950/40 border-slate-800/80 opacity-60'
-                    }`}
-                  >
-                    <div className="flex items-center justify-between mb-1.5">
-                      <span className="text-[10px] font-mono font-semibold text-slate-400 uppercase">
-                        Stage {idx + 1}
-                      </span>
-                      {isRunning && <span className="text-[10px] font-mono text-indigo-400 animate-pulse">Running...</span>}
-                      {isDone && <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />}
-                      {isHuman && <span className="text-[10px] font-mono text-amber-400">Review Delay</span>}
-                    </div>
-                    <div className="font-semibold text-slate-200 text-xs">{s.title}</div>
-                    <div className="text-[11px] text-slate-400 mt-0.5">{s.desc}</div>
-                  </div>
-                );
-              })}
-            </div>
-
-            {/* Terminal Live Activity Log */}
-            <div className="space-y-2">
-              <div className="text-xs font-mono font-semibold uppercase tracking-wider text-slate-400 flex items-center gap-2">
-                <Terminal className="w-3.5 h-3.5 text-indigo-400" />
-                <span>Agent Execution Stream</span>
-              </div>
-              <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 font-mono text-xs space-y-2 max-h-64 overflow-y-auto">
-                {job.progressEvents.map((ev, i) => (
-                  <div key={i} className="flex items-start gap-2 leading-relaxed">
-                    <span className="text-slate-400 shrink-0">
-                      [{new Date(ev.timestamp).toLocaleTimeString()}]
-                    </span>
-                    <span className={
-                      ev.status === 'completed'
-                        ? 'text-emerald-400'
-                        : ev.status === 'running'
-                        ? 'text-indigo-400'
-                        : ev.status === 'needs_human'
-                        ? 'text-amber-400'
-                        : 'text-slate-300'
-                    }>
-                      {ev.status === 'completed' && '[✓] '}
-                      {ev.status === 'running' && '[→] '}
-                      {ev.status === 'needs_human' && '[!] '}
-                      {ev.message}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Discovered Sources */}
-            {job.discoveredSources && job.discoveredSources.length > 0 && (
-              <div className="space-y-2">
-                <span className="text-xs font-mono font-semibold uppercase tracking-wider text-slate-400">
-                  Discovered Sources ({job.discoveredSources.length})
-                </span>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                  {job.discoveredSources.map((src, i) => (
-                    <a
-                      key={i}
-                      href={src.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="p-2.5 rounded-lg bg-slate-950 border border-slate-800 text-xs text-slate-300 hover:text-indigo-300 flex items-center justify-between gap-2"
+                  return (
+                    <div
+                      key={idx}
+                      className={`border-2 p-3 transition-all ${
+                        isRunning
+                          ? 'border-brand-500 bg-brand-500/5'
+                          : isDone
+                          ? 'border-term-green bg-term-green/5'
+                          : isHuman
+                          ? 'border-brand-600 bg-brand-500/5'
+                          : 'border-void-700 bg-void-900 opacity-50'
+                      }`}
                     >
-                      <span className="truncate">{src.title}</span>
-                      <ExternalLink className="w-3 h-3 shrink-0 text-slate-400" />
-                    </a>
-                  ))}
-                </div>
+                      {/* Top row */}
+                      <div className="flex items-center justify-between mb-1.5">
+                        <span className="text-[9px] font-mono font-black uppercase tracking-widest text-void-500">
+                          {s.code}_NODE
+                        </span>
+                        {isRunning && (
+                          <span className="text-[9px] font-mono text-brand-500 animate-pulse">RUNNING...</span>
+                        )}
+                        {isDone && <CheckCircle2 className="w-3.5 h-3.5 text-term-green" />}
+                        {isHuman && (
+                          <span className="text-[9px] font-mono text-brand-500">REVIEW_DELAY</span>
+                        )}
+                      </div>
+                      <div className="font-mono font-black text-void-50 text-xs uppercase tracking-wide">
+                        {s.title}
+                      </div>
+                      <div className="text-[11px] text-void-500 font-mono mt-0.5">{s.desc}</div>
+                    </div>
+                  );
+                })}
               </div>
-            )}
 
-            {/* Guide Ready Action */}
-            {job.status === 'completed' && job.findings && (
-              <div className="p-4 rounded-xl bg-emerald-950/20 border border-emerald-500/40 flex flex-col sm:flex-row items-center justify-between gap-4">
-                <div className="space-y-0.5">
-                  <div className="font-bold text-white text-sm flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-                    <span>Integration Intelligence Report Generated</span>
-                  </div>
-                  <p className="text-xs text-slate-300">
-                    Confidence: {job.findings.confidence?.score}% • Ready to review and share.
-                  </p>
+              {/* Terminal log */}
+              <div className="space-y-1.5">
+                <div className="sys-label flex items-center gap-2">
+                  <Terminal className="w-3.5 h-3.5 text-brand-500" />
+                  Agent Execution Stream
                 </div>
-                <button
-                  onClick={() => navigate(`/guides/${job.findings?.slug}`)}
-                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-semibold bg-emerald-600 hover:bg-emerald-500 text-white transition-colors shrink-0 shadow-md shadow-emerald-600/20"
+                <div
+                  ref={logRef}
+                  className="terminal-block p-4 space-y-1.5 max-h-56 overflow-y-auto"
                 >
-                  <span>View Full OAuth Guide</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
-                </button>
+                  {job.progressEvents.map((ev, i) => (
+                    <div key={i} className="flex items-start gap-2 leading-relaxed">
+                      <span className="text-void-500 shrink-0 text-[11px]">
+                        [{new Date(ev.timestamp).toLocaleTimeString()}]
+                      </span>
+                      <span className={`text-[11px] ${
+                        ev.status === 'completed'   ? 'text-term-green'  :
+                        ev.status === 'running'     ? 'text-brand-500'   :
+                        ev.status === 'needs_human' ? 'text-brand-600'   :
+                        'text-void-300'
+                      }`}>
+                        {ev.status === 'completed'   && '[✓] '}
+                        {ev.status === 'running'     && '[→] '}
+                        {ev.status === 'needs_human' && '[!] '}
+                        {ev.message}
+                      </span>
+                    </div>
+                  ))}
+                  {loading && (
+                    <div className="flex items-center gap-2 text-brand-500 text-[11px]">
+                      <RefreshCw className="w-3 h-3 animate-spin" />
+                      <span>Processing...</span>
+                    </div>
+                  )}
+                </div>
               </div>
-            )}
+
+              {/* Discovered Sources */}
+              {job.discoveredSources && job.discoveredSources.length > 0 && (
+                <div className="space-y-1.5">
+                  <div className="sys-label">
+                    Discovered Sources ({job.discoveredSources.length})
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    {job.discoveredSources.map((src, i) => (
+                      <a
+                        key={i}
+                        href={src.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="border-2 border-void-700 bg-void-900 hover:border-brand-500 p-2.5 text-xs font-mono text-void-300 hover:text-brand-500 flex items-center justify-between gap-2 transition-all"
+                      >
+                        <span className="truncate">{src.title}</span>
+                        <ExternalLink className="w-3 h-3 shrink-0" />
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Guide Ready */}
+              {job.status === 'completed' && job.findings && (
+                <div className="border-2 border-term-green bg-term-green/5 p-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+                  <div>
+                    <div className="font-black font-mono text-white text-sm uppercase flex items-center gap-2 mb-1">
+                      <CheckCircle2 className="w-4 h-4 text-term-green" />
+                      Integration Intelligence Report Generated
+                    </div>
+                    <p className="text-xs text-void-300 font-mono">
+                      Confidence: {job.findings.confidence?.score}% • Ready to review and share.
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => navigate(`/guides/${job.findings?.slug}`)}
+                    className="btn-yellow px-5 py-2.5 text-xs flex items-center gap-2 shrink-0"
+                  >
+                    <span>View Full OAuth Guide</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       )}

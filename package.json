@@ -3,10 +3,11 @@
   "version": "1.0.0",
   "description": "AuthScout — OAuth Integration Intelligence for AI Builders",
   "private": true,
+  "engines": {
+    "node": ">=20.0.0"
+  },
   "scripts": {
-    "build": "npm --prefix client install && npm --prefix client run build && npm --prefix server install && npm --prefix server run build",
-    "start": "node server/dist/index.js",
-    "dev:server": "npm --prefix server run dev",
-    "dev:client": "npm --prefix client run dev"
+    "build": "cd client && npm install && npm run build && cd ../server && npm install && npm run build && cd ..",
+    "start": "node server/dist/index.js"
   }
 }

@@ -15,9 +15,9 @@ export const App: React.FC = () => {
     <BrowserRouter>
       <div className="min-h-screen bg-void-900 text-void-100 flex flex-col font-mono selection:bg-brand-500 selection:text-void-900">
         <Navbar />
-        <div className="flex flex-1">
+        <div className="flex min-w-0 flex-1 flex-col md:flex-row">
           <Sidebar />
-          <main className="flex-1 p-4 md:p-8 max-w-7xl mx-auto w-full overflow-y-auto">
+          <main className="mx-auto w-full min-w-0 max-w-7xl flex-1 overflow-y-auto p-3 sm:p-4 md:p-8">
             <Routes>
               <Route path="/" element={<LandingPage />} />
               <Route path="/overview" element={<DashboardPage />} />

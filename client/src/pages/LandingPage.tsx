@@ -266,8 +266,8 @@ export const LandingPage: React.FC = () => {
           </h2>
         </div>
 
-        <div className="border-2 border-void-700 overflow-hidden text-xs">
-          <table className="w-full text-left font-mono">
+        <div className="overflow-x-auto border-2 border-void-700 text-xs">
+          <table className="w-full min-w-[640px] text-left font-mono">
             <thead className="bg-void-900 text-void-400 border-b-2 border-void-700 text-[10px] uppercase tracking-wider">
               <tr>
                 <th className="p-3">Requirement</th>
@@ -308,7 +308,7 @@ export const LandingPage: React.FC = () => {
 
       {/* ── POPULAR DIRECTORY SHOWCASE ─────────────────────────── */}
       <section className="space-y-4">
-        <div className="flex items-center justify-between border-b-2 border-void-700 pb-3">
+        <div className="flex flex-col gap-3 border-b-2 border-void-700 pb-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <div className="flex items-center gap-2 mb-0.5">
               <div className="w-1 h-5 bg-brand-500" />
@@ -322,7 +322,7 @@ export const LandingPage: React.FC = () => {
           </div>
           <Link
             to="/directory"
-            className="text-xs font-bold text-brand-500 hover:underline flex items-center gap-1 uppercase tracking-wider"
+            className="flex items-center gap-1 self-start text-xs font-bold uppercase tracking-wider text-brand-500 hover:underline sm:self-auto"
           >
             <span>View Full Directory</span>
             <ArrowRight className="w-3.5 h-3.5" />

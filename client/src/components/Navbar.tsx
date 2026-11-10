@@ -15,19 +15,19 @@ export const Navbar: React.FC = () => {
 
   return (
     <header className="sticky top-0 z-40 w-full border-b-2 border-void-700 bg-void-900/95 backdrop-blur-sm">
-      <div className="flex h-14 items-center px-4 md:px-6 justify-between gap-4">
+      <div className="flex h-14 items-center justify-between gap-2 px-3 sm:gap-4 sm:px-4 md:px-6">
 
         {/* Brand */}
-        <Link to="/" className="flex items-center gap-3 group shrink-0">
-          <div className="w-8 h-8 bg-brand-500 flex items-center justify-center shrink-0">
+        <Link to="/" className="group flex shrink-0 items-center gap-2 sm:gap-3">
+          <div className="flex h-8 w-8 shrink-0 items-center justify-center bg-brand-500">
             <Zap className="w-4 h-4 text-void-900" strokeWidth={3} />
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <span className="font-mono font-black tracking-widest text-white text-sm uppercase">
+              <span className="font-mono text-sm font-black uppercase tracking-widest text-white">
                 AuthScout
               </span>
-              <span className="text-[9px] font-mono font-bold tracking-widest bg-brand-500 text-void-900 px-1.5 py-0.5">
+              <span className="hidden bg-brand-500 px-1.5 py-0.5 font-mono text-[9px] font-bold tracking-widest text-void-900 sm:inline">
                 PRO
               </span>
             </div>
@@ -52,13 +52,21 @@ export const Navbar: React.FC = () => {
         </form>
 
         {/* Right side */}
-        <div className="flex items-center gap-3">
+        <div className="flex shrink-0 items-center gap-2 sm:gap-3">
+          <Link
+            to="/directory"
+            aria-label="Search OAuth providers"
+            className="flex h-9 w-9 items-center justify-center border-2 border-void-600 text-void-300 transition-colors hover:border-brand-500 hover:text-brand-500 md:hidden"
+          >
+            <Search className="h-4 w-4" />
+          </Link>
           <Link
             to="/research"
-            className="btn-yellow px-3 py-1.5 text-xs flex items-center gap-1.5"
+            className="btn-yellow flex min-h-9 items-center gap-1.5 px-2 text-[10px] sm:px-3 sm:py-1.5 sm:text-xs"
           >
             <Zap className="w-3 h-3" strokeWidth={3} />
-            <span>Research Provider</span>
+            <span className="sm:hidden">Research</span>
+            <span className="hidden sm:inline">Research Provider</span>
           </Link>
           <a
             href="https://docs.composio.dev/toolkits/managed-auth"

@@ -22,16 +22,16 @@ export const Sidebar: React.FC = () => {
   ];
 
   return (
-    <aside className="w-60 border-r-2 border-void-700 bg-void-900 flex flex-col shrink-0 min-h-[calc(100vh-3.5rem)]">
-      <div className="p-3 flex-1 space-y-5">
+    <aside className="flex w-full shrink-0 flex-col border-b-2 border-void-700 bg-void-900 md:min-h-[calc(100vh-3.5rem)] md:w-60 md:border-b-0 md:border-r-2">
+      <div className="min-w-0 flex-1 p-2 md:space-y-5 md:p-3">
 
         {/* Nav label */}
-        <div className="px-2 pt-1">
+        <div className="hidden px-2 pt-1 md:block">
           <span className="sys-label">Navigation</span>
         </div>
 
         {/* Navigation list */}
-        <div className="space-y-0.5">
+        <nav aria-label="Main navigation" className="-mx-2 flex gap-1 overflow-x-auto px-2 pb-1 md:mx-0 md:block md:space-y-0.5 md:overflow-visible md:px-0 md:pb-0">
           {navItems.map((item) => {
             const Icon = item.icon;
             return (
@@ -40,14 +40,14 @@ export const Sidebar: React.FC = () => {
                 to={item.to}
                 end={item.to === '/'}
                 className={({ isActive }) =>
-                  `flex items-center justify-between px-2.5 py-2 text-xs font-mono uppercase tracking-wider transition-all border-l-2 ${
+                  `flex min-h-10 shrink-0 items-center justify-between whitespace-nowrap border-l-2 px-2.5 py-2 text-[10px] font-mono uppercase tracking-wider transition-all md:text-xs ${
                     isActive
                       ? 'border-brand-500 bg-brand-500/10 text-brand-500 font-black'
                       : 'border-transparent text-void-400 hover:text-void-100 hover:border-void-500 hover:bg-void-800'
                   }`
                 }
               >
-                <div className="flex items-center gap-2.5">
+                <div className="flex items-center gap-2 md:gap-2.5">
                   <Icon className="w-3.5 h-3.5 shrink-0" strokeWidth={item.to === '/research' ? 3 : 2} />
                   <span>{item.label}</span>
                 </div>
@@ -59,13 +59,13 @@ export const Sidebar: React.FC = () => {
               </NavLink>
             );
           })}
-        </div>
+        </nav>
 
         {/* Divider */}
-        <div className="border-t-2 border-void-700" />
+        <div className="hidden border-t-2 border-void-700 md:block" />
 
         {/* Composio Managed Auth Card */}
-        <div className="p-3 border-2 border-void-600 bg-void-800 space-y-2 relative overflow-hidden">
+        <div className="relative hidden space-y-2 overflow-hidden border-2 border-void-600 bg-void-800 p-3 md:block">
           <div className="absolute left-0 top-0 bottom-0 w-1 bg-brand-500" />
           <div className="pl-2">
             <div className="flex items-center gap-1.5 mb-1.5">
@@ -91,7 +91,7 @@ export const Sidebar: React.FC = () => {
       </div>
 
       {/* Status bar footer */}
-      <div className="status-bar px-3 py-2 flex items-center justify-between">
+      <div className="status-bar hidden items-center justify-between px-3 py-2 md:flex">
         <span className="text-void-500 uppercase tracking-wider">AUTHSCOUT v1.0.0</span>
         <span className="flex items-center gap-1.5 text-term-green font-bold">
           <span className="w-1.5 h-1.5 rounded-full bg-term-green animate-pulse inline-block" />

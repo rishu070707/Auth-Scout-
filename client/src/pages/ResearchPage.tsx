@@ -135,7 +135,7 @@ export const ResearchPage: React.FC = () => {
       {/* Input Form */}
       <form
         onSubmit={handleStartResearch}
-        className="border-2 border-void-600 bg-void-800 p-6 space-y-4"
+        className="space-y-4 border-2 border-void-600 bg-void-800 p-4 sm:p-6"
       >
         {/* Form title bar */}
         <div className="flex items-center gap-2 border-b-2 border-void-700 pb-3 mb-4">
@@ -175,14 +175,14 @@ export const ResearchPage: React.FC = () => {
           </div>
         )}
 
-        <div className="flex items-center justify-between pt-2">
+        <div className="flex flex-col gap-3 pt-2 sm:flex-row sm:items-center sm:justify-between">
           <div className="text-[11px] text-void-500 font-mono hidden sm:block">
             Protected with SSRF validation & domain boundary enforcement
           </div>
           <button
             type="submit"
             disabled={loading}
-            className="btn-yellow px-5 py-2.5 text-xs flex items-center gap-2 disabled:opacity-50"
+            className="btn-yellow flex items-center justify-center gap-2 px-5 py-2.5 text-xs disabled:opacity-50"
           >
             {loading ? (
               <>
@@ -227,10 +227,10 @@ export const ResearchPage: React.FC = () => {
         <div className="space-y-5">
           <div className="border-2 border-void-600 bg-void-800 overflow-hidden">
             {/* Pipeline header */}
-            <div className="border-b-2 border-void-700 px-5 py-3 flex items-center justify-between bg-void-900">
-              <div className="flex items-center gap-3">
+            <div className="flex flex-col gap-2 border-b-2 border-void-700 bg-void-900 px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:px-5">
+              <div className="flex min-w-0 items-center gap-3">
                 <div className="w-2.5 h-2.5 bg-term-green animate-pulse" />
-                <span className="font-mono font-black text-white text-sm uppercase tracking-wider">
+                <span                 className="min-w-0 break-words font-mono text-sm font-black uppercase tracking-wider text-white">
                   Live Agent Pipeline: {job.applicationName}
                 </span>
               </div>
@@ -239,9 +239,9 @@ export const ResearchPage: React.FC = () => {
               </span>
             </div>
 
-            <div className="p-5 space-y-5">
+            <div className="space-y-5 p-3 sm:p-5">
               {/* Stage grid — image 2 node style */}
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+              <div className="grid grid-cols-1 gap-2 min-[400px]:grid-cols-2 md:grid-cols-3">
                 {STAGES.map((s, idx) => {
                   const stageEvents = job.progressEvents.filter((e) => e.stage === s.title);
                   const lastEvent = stageEvents[stageEvents.length - 1];

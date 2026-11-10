@@ -97,15 +97,15 @@ export const GuidePage: React.FC = () => {
   return (
     <div className="space-y-8 max-w-5xl mx-auto pb-24">
       {/* Breadcrumb & Navigation */}
-      <div className="flex items-center justify-between text-xs print:hidden border-b-2 border-void-700 pb-3">
-        <div className="flex items-center gap-2 text-void-400 font-mono uppercase tracking-wider">
+      <div className="flex flex-col gap-3 border-b-2 border-void-700 pb-3 text-xs print:hidden sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex min-w-0 items-center gap-2 overflow-hidden font-mono uppercase tracking-wider text-void-400">
           <Link to="/directory" className="hover:text-brand-500 transition-colors">Directory</Link>
           <ChevronRight className="w-3 h-3 text-void-600" />
-          <span className="text-brand-500 font-bold">{guide.applicationName}</span>
+          <span className="truncate text-brand-500 font-bold">{guide.applicationName}</span>
         </div>
 
         {/* Share & Export Controls */}
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <button
             onClick={handleCopyLink}
             className="btn-ghost px-3 py-1.5 text-xs flex items-center gap-1.5"
@@ -452,8 +452,8 @@ export const GuidePage: React.FC = () => {
             Requested Permissions & Scopes
           </h2>
         </div>
-        <div className="border-2 border-void-700 overflow-hidden">
-          <table className="w-full text-left text-xs font-mono">
+        <div className="overflow-x-auto border-2 border-void-700">
+          <table className="w-full min-w-[680px] text-left text-xs font-mono">
             <thead className="bg-void-900 text-void-400 border-b-2 border-void-700 text-[10px] uppercase tracking-wider">
               <tr>
                 <th className="p-3">Scope Name</th>
@@ -650,8 +650,8 @@ export const GuidePage: React.FC = () => {
           <span className="text-xs text-void-500 font-mono uppercase">{guide.evidenceMatrix.length} Verified Claims</span>
         </div>
 
-        <div className="border-2 border-void-700 overflow-hidden">
-          <table className="w-full text-left text-xs font-mono">
+        <div className="overflow-x-auto border-2 border-void-700">
+          <table className="w-full min-w-[640px] text-left text-xs font-mono">
             <thead className="bg-void-900 text-void-400 border-b-2 border-void-700 text-[10px] uppercase tracking-wider">
               <tr>
                 <th className="p-3">Claim & Value</th>

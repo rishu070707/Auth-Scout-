@@ -29,8 +29,8 @@ export const DocsPage: React.FC = () => {
             <span>Composio Managed OAuth vs. Custom OAuth</span>
           </h2>
         </div>
-        <div className="border-2 border-void-700 overflow-hidden text-xs">
-          <table className="w-full text-left">
+        <div className="overflow-x-auto border-2 border-void-700 text-xs">
+          <table className="w-full min-w-[640px] text-left">
             <thead className="bg-void-900 text-void-400 border-b-2 border-void-700 text-[10px] uppercase tracking-wider">
               <tr>
                 <th className="p-3">Dimension</th>

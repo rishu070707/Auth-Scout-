@@ -3,11 +3,15 @@
   "version": "1.0.0",
   "description": "AuthScout — OAuth Integration Intelligence for AI Builders",
   "private": true,
+  "workspaces": [
+    "server",
+    "client"
+  ],
   "engines": {
     "node": ">=20.0.0"
   },
   "scripts": {
-    "build": "cd client && npm install && npm run build && cd ../server && npm install && npm run build && cd ..",
+    "build": "npm run build --workspace=client && npm run build --workspace=server",
     "start": "node server/dist/index.js"
   }
 }
